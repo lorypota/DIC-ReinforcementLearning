@@ -8,7 +8,7 @@ from tqdm import trange
 
 try:
     from world import Environment
-    from agents.random_agent import RandomAgent
+    from agents.value_iteration_agent import ValueIterationAgent
 except ModuleNotFoundError:
     from os import path
     from os import pardir
@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     if root_path not in sys.path:
         sys.path.extend(root_path)
     from world import Environment
-    from agents.random_agent import RandomAgent
+    from agents.value_iteration_agent import ValueIterationAgent
 
 def parse_args():
     p = ArgumentParser(description="DIC Reinforcement Learning Trainer.")
@@ -50,11 +50,12 @@ def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
         env = Environment(grid, no_gui,sigma=sigma, target_fps=fps, 
                           random_seed=random_seed)
         
-        # Initialize agent
-        agent = RandomAgent()
-        
         # Always reset the environment to initial state
         state = env.reset()
+
+        # Initialize agent (after environment reset so env.grid is available)
+        agent = ValueIterationAgent(env.grid)
+
         for _ in trange(iters):
             
             # Agent takes an action based on the latest observation and info.

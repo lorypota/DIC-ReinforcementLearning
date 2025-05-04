@@ -5,6 +5,7 @@ Train your RL Agent in this file.
 from argparse import ArgumentParser
 from pathlib import Path
 from tqdm import trange
+import numpy as np
 
 try:
     from world import Environment
@@ -39,16 +40,32 @@ def parse_args():
                    help="Random seed value for the environment.")
     return p.parse_args()
 
+def custom_reward_fn(grid: np.ndarray, new_pos: tuple[int,int]) -> float:
+        cell = grid[new_pos]
+        match cell:
+            case 0|4:   # empty or starting
+                return -1.0
+            case 1|2: # wall or obstacle
+                return -1.0
+            case 3:   # goal
+                return 10.0
+            case _:
+                raise ValueError(f"Unexpected cell value {cell} at {new_pos}")
 
 def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
          sigma: float, random_seed: int):
     """Main loop of the program."""
-
-    for grid in grid_paths:
-        
+    
+    for grid in grid_paths: 
         # Set up the environment
-        env = Environment(grid, no_gui,sigma=sigma, target_fps=fps, 
-                          random_seed=random_seed)
+        env = Environment(
+            grid_fp=grid,
+            no_gui=no_gui,
+            sigma=sigma,
+            reward_fn=custom_reward_fn,
+            target_fps=fps,
+            random_seed=random_seed,
+        )
         
         # Initialize agent
         agent = RandomAgent()
@@ -70,7 +87,14 @@ def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
             agent.update(state, reward, info["actual_action"])
 
         # Evaluate the agent
-        Environment.evaluate_agent(grid, agent, iters, sigma, random_seed=random_seed)
+        Environment.evaluate_agent(
+            grid,
+            agent,
+            iters,
+            sigma,
+            random_seed=random_seed,
+            reward_fn=custom_reward_fn
+        )
 
 
 if __name__ == '__main__':

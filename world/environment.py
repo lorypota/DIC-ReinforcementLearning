@@ -121,10 +121,19 @@ class Environment:
                 }
 
     def _initialize_agent_pos(self):
-        """Initializes agent position from the given location or
-        randomly chooses one if None was given.
+        """Initializes agent position choosing randomly from charger‐cells if any exist,
+        otherwise randomly chooses one if None was given.
         """
-
+        # If there are any charger‐cells (value 4), pick one at random
+        grid_meta   = Grid.load_grid(self.grid_fp)
+        charger_code = grid_meta.objects["charger"]
+        charger_locs = np.argwhere(self.grid == charger_code)
+        if charger_locs.size > 0:
+            idx = random.randint(0, len(charger_locs) - 1)
+            self.agent_pos = (int(charger_locs[idx][0]), int(charger_locs[idx][1]))
+            return
+        
+        # If a single override is provided, use it
         if self.agent_start_pos is not None:
             pos = (self.agent_start_pos[0], self.agent_start_pos[1])
             if self.grid[pos] == 0:
@@ -197,7 +206,7 @@ class Environment:
         """
 
         match self.grid[new_pos]:
-            case 0:  # Moved to an empty tile
+            case 0 | 4:  # Moved to an empty tile (or starting tile)
                 self.agent_pos = new_pos
                 self.info["agent_moved"] = True
                 self.world_stats["total_agent_moves"] += 1
@@ -303,7 +312,7 @@ class Environment:
         """
 
         match grid[agent_pos]:
-            case 0:  # Moved to an empty tile
+            case 0 | 4:  # Moved to an empty tile or starting
                 reward = -1
             case 1 | 2:  # Moved to a wall or obstacle
                 reward = -5
@@ -323,6 +332,7 @@ class Environment:
                        sigma: float = 0.,
                        agent_start_pos: tuple[int, int] = None,
                        random_seed: int | float | str | bytes | bytearray = 0,
+                       reward_fn: callable = None,
                        show_images: bool = False):
         """Evaluates a single trained agent's performance.
 
@@ -350,6 +360,7 @@ class Environment:
                           no_gui=True,
                           sigma=sigma,
                           agent_start_pos=agent_start_pos,
+                          reward_fn=reward_fn,
                           target_fps=-1,
                           random_seed=random_seed)
         

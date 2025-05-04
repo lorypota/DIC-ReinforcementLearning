@@ -20,7 +20,7 @@ class ValueIterationAgent(BaseAgent):
             delta = 0
             for i in range(self.grid.shape[0]):
                 for j in range(self.grid.shape[1]):
-                    if self.grid[i, j] in [1, 2, 3]:  # Skip walls, obstacles, targets
+                    if self.grid[i, j] in [1, 2, 3]: 
                         continue
                     v = self.V[i, j]
                     q_values = []
@@ -35,14 +35,14 @@ class ValueIterationAgent(BaseAgent):
                                 reward = -1
                             elif self.grid[next_pos] in [1, 2]:
                                 reward = -5
-                                next_pos = (i, j)  # Stay in place if hitting wall/obstacle
+                                next_pos = (i, j)  # Stay in place if hitting obstacle
                             elif self.grid[next_pos] == 3:
                                 reward = 10
                             else:
                                 continue
                             q = reward + self.gamma * self.V[next_pos]
                         else:
-                            q = -5 + self.gamma * self.V[i, j]  # Out of bounds treated as wall
+                            q = -5 + self.gamma * self.V[i, j] 
                         q_values.append(q)
                     self.V[i, j] = max(q_values) if q_values else self.V[i, j]
                     self.policy[i, j] = self.actions[np.argmax(q_values)] if q_values else 0

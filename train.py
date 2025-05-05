@@ -10,6 +10,7 @@ import numpy as np
 try:
     from world import Environment
     from agents.random_agent import RandomAgent
+    from agents.vi_agent import ValueIterationAgent
 except ModuleNotFoundError:
     from os import path
     from os import pardir
@@ -21,6 +22,7 @@ except ModuleNotFoundError:
         sys.path.extend(root_path)
     from world import Environment
     from agents.random_agent import RandomAgent
+    from agents.vi_agent import ValueIterationAgent
 
 def parse_args():
     p = ArgumentParser(description="DIC Reinforcement Learning Trainer.")
@@ -38,6 +40,10 @@ def parse_args():
                    help="Number of iterations to go through.")
     p.add_argument("--random_seed", type=int, default=0,
                    help="Random seed value for the environment.")
+    p.add_argument("--agent", type=str, choices=["random", "value_iter"], default="value_iter",
+                   help="Agent to train/evaluate.")
+    p.add_argument("--iters", type=int, default=1000,
+               help="Number of iterations.")
     return p.parse_args()
 
 def custom_reward_fn(grid: np.ndarray, new_pos: tuple[int,int]) -> float:
@@ -53,7 +59,7 @@ def custom_reward_fn(grid: np.ndarray, new_pos: tuple[int,int]) -> float:
                 raise ValueError(f"Unexpected cell value {cell} at {new_pos}")
 
 def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
-         sigma: float, random_seed: int):
+         sigma: float, random_seed: int, agent_type: str):
     """Main loop of the program."""
     
     for grid in grid_paths: 
@@ -68,7 +74,10 @@ def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
         )
         
         # Initialize agent
-        agent = RandomAgent()
+        if agent_type == "random":
+            agent = RandomAgent()
+        else:
+            agent = ValueIterationAgent(env)
         
         # Always reset the environment to initial state
         state = env.reset()
@@ -99,4 +108,12 @@ def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
 
 if __name__ == '__main__':
     args = parse_args()
-    main(args.GRID, args.no_gui, args.iter, args.fps, args.sigma, args.random_seed)
+    main(
+        args.GRID,
+        args.no_gui,
+        args.iters,
+        args.fps,
+        args.sigma,
+        args.random_seed,
+        args.agent
+    )

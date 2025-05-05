@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/train.py",
       "console": "integratedTerminal",
-      "args": ["grid_configs/test.npy"]
+      "args": ["grid_configs/large_grid.npy", "grid_configs/A1_grid.npy"]
     }
   ]
 }

@@ -17,7 +17,7 @@ from experiments.helper import (
 def main():
     from pathlib import Path
 
-    grid_fp = Path("grid_configs/A1_grid.npy")
+    grid_fp = Path("../grid_configs/A1_grid.npy")
     sigma = 0.1
 
     env = Environment(grid_fp=grid_fp, no_gui=True, sigma=sigma)

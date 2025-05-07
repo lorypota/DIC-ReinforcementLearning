@@ -23,7 +23,11 @@ class QLearningAgent(BaseAgent):
         """
         super().__init__()
         self.gamma = gamma
+        #self.epsilon = epsilon
+        #decaying epsilon
         self.epsilon = epsilon
+        self.min_epsilon = 0.01
+        self.epsilon_decay = 0.995 
         self.alpha = alpha
         self.convergence_tol = convergence_tol
         self.patience = patience
@@ -80,6 +84,9 @@ class QLearningAgent(BaseAgent):
         self.Q[i, j, action] += self.alpha * td_error
 
         self._check_convergence()
+        # Decay epsilon
+        self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+
 
     def _check_convergence(self):
         """

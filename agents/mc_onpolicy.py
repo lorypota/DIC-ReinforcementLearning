@@ -26,6 +26,8 @@ class MonteCarloOnPolicyAgent(BaseAgent):
         super().__init__()
         self.gamma = gamma
         self.epsilon = epsilon
+        self.min_epsilon = 0.01
+        self.epsilon_decay = 0.995
         self.alpha = alpha
         self.max_episode_len = max_episode_len
         self.convergence_tol = convergence_tol
@@ -72,6 +74,9 @@ class MonteCarloOnPolicyAgent(BaseAgent):
         Finalizes the current episode by applying the Monte Carlo update
         to all stored transitions and checking for convergence.
         """
+        # Decay epsilon after each episode
+        #self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+
         self._update_Q()
         self._check_convergence()
         self.episode.clear()
@@ -107,6 +112,7 @@ class MonteCarloOnPolicyAgent(BaseAgent):
             i, j = state
             old = self.Q[i, j, action]
             self.Q[i, j, action] += self.alpha * (G - old)
+
 
     def _check_convergence(self):
         """

@@ -2,12 +2,56 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "train.py with test.npy",
+      "name": "train random",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/train.py",
       "console": "integratedTerminal",
-      "args": ["grid_configs/large_grid.npy", "grid_configs/A1_grid.npy"]
+      "args": [
+        "--agent",
+        "random",
+        "grid_configs/large_grid.npy",
+        "grid_configs/A1_grid.npy"
+      ]
+    },
+    {
+      "name": "train value_iter",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--agent",
+        "value_iter",
+        "grid_configs/large_grid.npy",
+        "grid_configs/A1_grid.npy"
+      ]
+    },
+    {
+      "name": "train on policy mc",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--agent",
+        "mc",
+        "grid_configs/large_grid.npy",
+        "grid_configs/A1_grid.npy"
+      ]
+    },
+    {
+      "name": "train qlearning",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/train.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--agent",
+        "qlearning",
+        "grid_configs/large_grid.npy",
+        "grid_configs/A1_grid.npy"
+      ]
     }
   ]
 }

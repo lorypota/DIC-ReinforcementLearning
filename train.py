@@ -11,6 +11,8 @@ try:
     from world import Environment
     from agents.random_agent import RandomAgent
     from agents.vi_agent import ValueIterationAgent
+    from agents.onpolicy_mc_agent import MonteCarloAgent
+    from agents.qlearning_agent import QLearningAgent
 except ModuleNotFoundError:
     from os import path
     from os import pardir
@@ -23,6 +25,8 @@ except ModuleNotFoundError:
     from world import Environment
     from agents.random_agent import RandomAgent
     from agents.vi_agent import ValueIterationAgent
+    from agents.onpolicy_mc_agent import MonteCarloAgent
+    from agents.qlearning_agent import QLearningAgent
 
 def parse_args():
     p = ArgumentParser(description="DIC Reinforcement Learning Trainer.")
@@ -40,7 +44,7 @@ def parse_args():
                    help="Number of iterations to go through.")
     p.add_argument("--random_seed", type=int, default=0,
                    help="Random seed value for the environment.")
-    p.add_argument("--agent", type=str, choices=["random", "value_iter"], default="value_iter",
+    p.add_argument("--agent", type=str, choices=["random", "value_iter", "mc", "qlearning"], default="random    ",
                    help="Agent to train/evaluate.")
     p.add_argument("--iters", type=int, default=1000,
                help="Number of iterations.")
@@ -76,8 +80,12 @@ def main(grid_paths: list[Path], no_gui: bool, iters: int, fps: int,
         # Initialize agent
         if agent_type == "random":
             agent = RandomAgent()
-        else:
-            agent = ValueIterationAgent(env)
+        elif agent_type == "value_iter":
+            agent = ValueIterationAgent(env, gamma=0.9)
+        elif agent_type == "mc":
+            agent = MonteCarloAgent(env, gamma=0.9, epsilon=0.1)
+        else:  # qlearning
+            agent = QLearningAgent(env, gamma=0.9, alpha=0.1, epsilon=0.1)
         
         # Always reset the environment to initial state
         state = env.reset()

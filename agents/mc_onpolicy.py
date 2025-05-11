@@ -10,7 +10,8 @@ class MonteCarloOnPolicyAgent(BaseAgent):
                  alpha=0.1,
                  max_episode_len=500,
                  convergence_tol=1e-3,
-                 patience=5):
+                 patience=5,
+                 first_visit=False):
         """
         Initializes the MonteCarloOnPolicyAgent with the given parameters.
 
@@ -26,10 +27,13 @@ class MonteCarloOnPolicyAgent(BaseAgent):
         super().__init__()
         self.gamma = gamma
         self.epsilon = epsilon
+        self.min_epsilon = 0.01
+        self.epsilon_decay = 0.995
         self.alpha = alpha
         self.max_episode_len = max_episode_len
         self.convergence_tol = convergence_tol
         self.patience = patience
+        self.first_visit = first_visit
 
         self.grid = np.load(grid_fp)
         self.n_rows, self.n_cols = self.grid.shape
@@ -72,6 +76,9 @@ class MonteCarloOnPolicyAgent(BaseAgent):
         Finalizes the current episode by applying the Monte Carlo update
         to all stored transitions and checking for convergence.
         """
+        # Decay epsilon after each episode
+        #self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+
         self._update_Q()
         self._check_convergence()
         self.episode.clear()
@@ -101,12 +108,20 @@ class MonteCarloOnPolicyAgent(BaseAgent):
         Updates the Q-values incrementally using the learning rate α.
         """
         G = 0
+        visited = set()
         for t in reversed(range(len(self.episode))):
             state, action, reward = self.episode[t]
             G = reward + self.gamma * G
+
+            if self.first_visit:
+                if (state, action) in visited:
+                    continue
+                visited.add((state, action))
+
             i, j = state
             old = self.Q[i, j, action]
             self.Q[i, j, action] += self.alpha * (G - old)
+
 
     def _check_convergence(self):
         """

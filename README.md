@@ -34,14 +34,14 @@ pip install -r requirements.txt
 ### 1. Value Iteration
 ```bash
 python train_value_iteration.py GRID [GRID ...] \
-[--no_gui] \
-[--sigma SIGMA] \
-[--fps FPS] \
-[--iter N_SWEEPS] \
-[--random_seed SEED] \
-[--gamma GAMMA] \
-[--theta TOL] \
-[--patience P]
+   [--no_gui] \
+   [--sigma SIGMA] \
+   [--fps FPS] \
+   [--iter N_SWEEPS] \
+   [--random_seed SEED] \
+   [--gamma GAMMA] \
+   [--theta TOL] \
+   [--patience P]
 ```
 - `GRID` : one or more .npy grid configs (e.g. grid_configs/A1_grid.npy)
 - `--sigma` : env stochasticity (default 0.1)
@@ -54,12 +54,12 @@ python train_value_iteration.py GRID [GRID ...] \
 
 ```bash
 python train_mc_onpolicy.py GRID [GRID ...] \
-  [--no_gui] \
-  [--sigma SIGMA] \
-  [--fps FPS] \
-  [--episodes N_EPISODES] \
-  [--iter MAX_STEPS] \
-  [--random_seed SEED]
+   [--no_gui] \
+   [--sigma SIGMA] \
+   [--fps FPS] \
+   [--episodes N_EPISODES] \
+   [--iter MAX_STEPS] \
+   [--random_seed SEED]
 ```
 
 - `--episodes` : total episodes to train (default 10000)
@@ -69,12 +69,12 @@ python train_mc_onpolicy.py GRID [GRID ...] \
 
 ```bash
 python train_q_learning.py GRID [GRID ...] \
-  [--no_gui] \
-  [--sigma SIGMA] \
-  [--fps FPS] \
-  [--episodes N_EPISODES] \
-  [--iter MAX_STEPS] \
-  [--random_seed SEED]
+   [--no_gui] \
+   [--sigma SIGMA] \
+   [--fps FPS] \
+   [--episodes N_EPISODES] \
+   [--iter MAX_STEPS] \
+   [--random_seed SEED]
 ```
 
 ## 📊 Reproducing Experiments

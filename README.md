@@ -1,11 +1,19 @@
 # Data Intelligence Challenge – 2AMC15
 
-This repository contains three reinforcement-learning agents applied to a grid-world delivery task, along with all scripts and instructions to **reproduce the results** presented in the report:
+The repository provides two sets of entry points:
 
-- **Value Iteration** (`agents/value_iteration.py`)  
-- **On-Policy Monte Carlo** (`agents/mc_onpolicy.py`)  
-- **Q-Learning** (`agents/q_learning.py`)  
+1. **Training & evaluation scripts** at the root:
+   - `train_value_iteration.py`
+   - `train_mc_onpolicy.py`
+   - `train_q_learning.py`
 
+2. **Automated experiment scripts** under `experiments/`:
+   - `experiments/grid_search.py`
+   - `experiments/sweep_stochasticity.py`
+   - `experiments/every_vs_first_visit_MC.py`
+   - `experiments/visualize.py`
+
+Make sure you run all commands from the project root (where `requirements.txt` lives) and that your `dic2025` environment is active.
 
 ## 🔧 Setup
 
@@ -98,28 +106,24 @@ python train_mc_onpolicy.py     grid_configs/large_grid.npy --episodes 5000 --no
 
 3. Hyperparameter Grid Search
 ```bash
-for eps in 0.01 0.05 0.1 0.2 0.3; do
-  for alpha in 0.005 0.01 0.05 0.1 0.2; do
-    for gamma in 0.85 0.90 0.95; do
-      # adjust in-code or via env vars
-    done
-  done
-done
+python experiments/grid_search.py
 ```
+- Searches over ε, α, γ for MC and Q-Learning on A1_grid.npy.
+- Prints top-5 parameter sets and plots policy agreement curves.
 
 4. Stochasticity Sweep
 ```bash
-for sigma in 0.0 0.05 0.1 0.2 0.3 0.4; do
-  python train_q_learning.py  grid_configs/large_grid.npy --episodes 5000 --sigma $sigma --no_gui
-  python train_mc_onpolicy.py grid_configs/large_grid.npy --episodes 5000 --sigma $sigma --no_gui
-done
+python experiments/sweep_stochasticity.py
 ```
+- Varies σ ∈ {0.0, 0.05, …, 0.4} on A1_grid.npy.
+- Plots final policy agreement vs. σ for both agents.
 
 5. First-visit vs Every-visit MC 
-In agents/mc_onpolicy.py, set `first_visit=True` or `False`, then re-run:
 ```bash
-python train_mc_onpolicy.py grid_configs/large_grid.npy --episodes 5000 --no_gui
+python experiments/every_vs_first_visit_MC.py
 ```
+- Compares `first_visit=True` vs. `False` on large_grid.npy.
+- Shows policy agreement over episodes.
 
 6. Best Agent Showcase
 
@@ -130,7 +134,7 @@ python train_q_learning.py grid_configs/large_grid.npy --episodes 5000 --sigma 0
 
 ## 📝 Notes
 
-- Agents print a convergence message when criteria are met.  
-- Final evaluation via `evaluate_agent()` reports reward, steps, and failed moves.  
-- To save or visualize plots, enable `show_images=True` or modify `evaluate_agent()`.  
-- Feel free to tweak hyperparameters or add new experiments.
+- All experiment scripts assume default hyperparameters as in the report; edit the top of each script to tweak.  
+- Scripts use `matplotlib` to display figures; close each plot window to proceed.  
+- Convergence messages and final metrics still appear in the console via `evaluate_agent()`.  
+- Feel free to integrate new experiments by following the pattern in `experiments/helper.py`.  

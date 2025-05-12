@@ -97,11 +97,9 @@ python train_mc_onpolicy.py     grid_configs/large_grid.npy --episodes 5000 --no
    Toggle or comment out the decay lines in each agent’s `__init__()` to compare.
 
 3. Hyperparameter Grid Search
-    
-    For example you can use the following bash script:
 ```bash
-for eps in 0.01 0.05 0.1; do
-  for alpha in 0.01 0.05 0.1; do
+for eps in 0.01 0.05 0.1 0.2 0.3; do
+  for alpha in 0.005 0.01 0.05 0.1 0.2; do
     for gamma in 0.85 0.90 0.95; do
       # adjust in-code or via env vars
     done
@@ -118,7 +116,7 @@ done
 ```
 
 5. First-visit vs Every-visit MC 
-In agents/mc_onpolicy.py, set first_visit=True or False, then re-run:
+In agents/mc_onpolicy.py, set `first_visit=True` or `False`, then re-run:
 ```bash
 python train_mc_onpolicy.py grid_configs/large_grid.npy --episodes 5000 --no_gui
 ```

@@ -32,17 +32,17 @@ pip install -r requirements.txt
 ## 🚀 Usage
 
 ### 1. Value Iteration
-    ```bash
-    python train_value_iteration.py GRID [GRID ...] \
-      [--no_gui] \
-      [--sigma SIGMA] \
-      [--fps FPS] \
-      [--iter N_SWEEPS] \
-      [--random_seed SEED] \
-      [--gamma GAMMA] \
-      [--theta TOL] \
-      [--patience P]
-    ```
+```bash
+python train_value_iteration.py GRID [GRID ...] \
+[--no_gui] \
+[--sigma SIGMA] \
+[--fps FPS] \
+[--iter N_SWEEPS] \
+[--random_seed SEED] \
+[--gamma GAMMA] \
+[--theta TOL] \
+[--patience P]
+```
 - `GRID` : one or more .npy grid configs (e.g. grid_configs/A1_grid.npy)
 - `--sigma` : env stochasticity (default 0.1)
 - `--iter` : max number of iterations

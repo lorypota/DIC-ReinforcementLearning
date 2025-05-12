@@ -1,4 +1,5 @@
 from agents.base_agent import BaseAgent
+from world.helpers import action_to_direction
 import numpy as np
 
 class ValueIterationAgent(BaseAgent):
@@ -9,37 +10,55 @@ class ValueIterationAgent(BaseAgent):
         self.theta = theta
         self.V = np.zeros(env.grid.shape)
         self.policy = np.zeros(env.grid.shape, dtype=int)
-        self.actions = [0, 1, 2, 3]  # Up, Down, Left, Right, adjust as needed
+        self.actions = [0, 1, 2, 3]
         self.run_value_iteration()
 
     def run_value_iteration(self):
         while True:
             delta = 0
-            for state in self.env.get_all_states():
-                if self.env.is_terminal(state):
-                    continue
-                v = self.V[state]
-                q_values = []
-                for a in self.actions:
-                    transitions = self.env.get_transitions(state, a)
-                    q = sum(p * (r + self.gamma * self.V[s_]) for p, s_, r in transitions)
-                    q_values.append(q)
-                self.V[state] = max(q_values)
-                delta = max(delta, abs(v - self.V[state]))
+            for i in range(self.grid.shape[0]):
+                for j in range(self.grid.shape[1]):
+                    if self.grid[i, j] in [1, 2, 3]:
+                        continue
+
+                    old_value = self.V[i, j]
+                    q_values = []
+
+                    for a_idx, a in enumerate(self.actions):
+                        direction = action_to_direction(a)
+                        ni, nj = i + direction[0], j + direction[1]
+
+                        if 0 <= ni < self.grid.shape[0] and 0 <= nj < self.grid.shape[1]:
+                            cell = self.grid[ni, nj]
+                            if cell == 0:
+                                reward = -1
+                                next_pos = (ni, nj)
+                            elif cell in [1, 2]:
+                                reward = -5
+                                next_pos = (i, j)
+                            elif cell == 3:
+                                reward = 10
+                                next_pos = (ni, nj)
+                            else:
+                                continue
+                        else:
+                            reward = -5
+                            next_pos = (i, j)
+
+                        q = reward + self.gamma * self.V[next_pos]
+                        q_values.append(q)
+
+                    if q_values:
+                        self.V[i, j] = max(q_values)
+                        self.policy[i, j] = self.actions[np.argmax(q_values)]
+                    else:
+                        self.V[i, j] = old_value
+                        self.policy[i, j] = 0
+
+                    delta = max(delta, abs(old_value - self.V[i, j]))
+
             if delta < self.theta:
                 break
-        self.extract_policy()
-
-    def extract_policy(self):
-        for state in self.env.get_all_states():
-            if self.env.is_terminal(state):
-                continue
-            q_values = []
-            for a in self.actions:
-                transitions = self.env.get_transitions(state, a)
-                q = sum(p * (r + self.gamma * self.V[s_]) for p, s_, r in transitions)
-                q_values.append(q)
-            self.policy[state] = np.argmax(q_values)
 
     def take_action(self, state):
         return self.policy[state]

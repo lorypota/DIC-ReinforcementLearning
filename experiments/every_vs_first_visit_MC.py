@@ -76,5 +76,5 @@ def compare_first_vs_every_visit(grid_fp, episodes=5000, max_steps=500, eval_int
     plt.show()
 
 if __name__ == "__main__":
-    grid_fp = Path("grid_configs/large_grid.npy")  
+    grid_fp = Path("../grid_configs/large_grid.npy")
     compare_first_vs_every_visit(grid_fp)

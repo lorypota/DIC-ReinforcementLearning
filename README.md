@@ -106,31 +106,34 @@ python train_mc_onpolicy.py     grid_configs/large_grid.npy --episodes 5000 --no
 
 3. **Hyperparameter Grid Search**
 ```bash
-python experiments/grid_search.py
+cd experiments && python grid_search.py
 ```
 - Searches over ε, α, γ for MC and Q-Learning on A1_grid.npy.
 - Prints top-5 parameter sets and plots policy agreement curves.
 
 4. **Stochasticity Sweep**
 ```bash
-python experiments/sweep_stochasticity.py
+cd experiments && python sweep_stochasticity.py
 ```
 - Varies σ ∈ {0.0, 0.05, …, 0.4} on A1_grid.npy.
 - Plots final policy agreement vs. σ for both agents.
 
 5. **First-visit vs Every-visit MC**
 ```bash
-python experiments/every_vs_first_visit_MC.py
+cd experiments && python every_vs_first_visit_MC.py
 ```
 - Compares `first_visit=True` vs. `False` on large_grid.npy.
 - Shows policy agreement over episodes.
 
-6. **Best Agent Showcase**
-
-    Q-Learning with epsilon=0.2, alpha=0.2, gamma=0.95, sigma=0.2
+6. **Learning Rate Decay Comparison**
 ```bash
-python train_q_learning.py grid_configs/large_grid.npy --episodes 5000 --sigma 0.2 --random_seed 42 --no_gui
+cd experiments && python compare_learning_rates.py
 ```
+- Compares exponential learning rate decay schedules across different bases (e.g., 0.995, 0.99, 0.97, 0.95, 0.93)
+- Evaluates both Q-Learning and On-Policy Monte Carlo on A1_grid.npy
+- Plots policy agreement vs. training episodes for each decay schedule
+
+
 
 ## 📝 Notes
 
